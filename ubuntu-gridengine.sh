@@ -194,7 +194,7 @@ sudo service portmap restart
 # ------
 
 # set up hosts
-IP="1.2.3.4" # hpc master & share Private ip
+IP="1.2.3.4" # hpc master & share private ip
 echo "$IP hpc-master hpc-share" | sudo tee -a /etc/hosts
 
 # install packages

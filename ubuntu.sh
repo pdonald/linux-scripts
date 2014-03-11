@@ -16,7 +16,7 @@ sudo restart ssh
 
 # motd
 sudo rm /etc/motd
-echo "Welcome to" | sudo tee /etc/motd
+echo "Welcome to my server" | sudo tee /etc/motd
 
 # timezone
 echo "UTC" | sudo tee /etc/timezone
@@ -32,6 +32,14 @@ sudo sysctl -p
 sudo chown root:root /swapfile 
 sudo chmod 0600 /swapfile
 
+# disable ipv6
+echo "net.ipv6.conf.all.disable_ipv6 = 1" | sudo tee -a /etc/sysctl.conf
+echo "net.ipv6.conf.default.disable_ipv6 = 1" | sudo tee -a /etc/sysctl.conf
+echo "net.ipv6.conf.lo.disable_ipv6 = 1" | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
+
+# todo: ulimits
+
 # update
 sudo apt-get update
 sudo apt-get dist-upgrade -y
@@ -41,7 +49,7 @@ sudo apt-get autoremove -y
 sudo apt-get install screen tmux htop unzip -y
 
 # firewall
-apt-get install iptables-persistent -y
+sudo apt-get install iptables-persistent -y
 sudo iptables -I INPUT 1 -i lo -j ACCEPT
 sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 sudo iptables -A INPUT -p icmp --icmp-type 8 -s 0/0 -d 1.2.3.4 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
