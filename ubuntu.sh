@@ -1,13 +1,23 @@
 # Ubuntu 13.10
 
+# hostname
+HOSTNAME=hostname
+sudo sed -i "s/127.0.1.1\t`hostname`/127.0.1.1\t$HOSTNAME/" /etc/hosts
+echo $HOSTNAME | sudo tee /etc/hostname
+sudo hostname $HOSTNAME
+bash
+
 # new user
-sudo useradd -d /home/ubuntu -m ubuntu -g users -s /bin/bash
-echo "ubuntu ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
-su - ubuntu
+USER=ubuntu
+sudo useradd -d /home/$USER -m $USER -g users -s /bin/bash
+echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
+su - $USER
 mkdir .ssh && chmod 700 .ssh
 echo "ssh-rsa AAAAAAAAAAA" >> ~/.ssh/authorized_keys
 
 # ssh
+sudo rm -rf /etc/ssh/ssh_host_*
+sudo dpkg-reconfigure openssh-server
 sudo sed -ie 's/Port.*[0-9]$/Port 9922/gI' /etc/ssh/sshd_config
 sudo sed -ie 's/#ListenAddress 0.0.0.0$/ListenAddress 0.0.0.0/gI' /etc/ssh/sshd_config
 sudo sed -ie 's/PermitRootLogin\s*yes\s*$/PermitRootLogin no/gI' /etc/ssh/sshd_config
@@ -21,6 +31,9 @@ echo "Welcome to my server" | sudo tee /etc/motd
 # timezone
 echo "UTC" | sudo tee /etc/timezone
 sudo dpkg-reconfigure --frontend noninteractive tzdata
+
+# ntp
+sudo apt-get install ntp -y
 
 # swap
 sudo fallocate -l 4G /swapfile
