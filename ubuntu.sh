@@ -54,6 +54,7 @@ sudo sysctl -p
 # todo: ulimits
 
 # update
+sudo sed -i "s/us\.archive\.ubuntu/mirrors.digitalocean/g" /etc/apt/sources.list
 sudo apt-get update
 sudo apt-get dist-upgrade -y
 sudo apt-get autoremove -y
@@ -72,7 +73,7 @@ sudo iptables -A INPUT -j REJECT
 sudo iptables-save > /etc/iptables/rules.v4
 
 # node.js source install
-sudo apt-get install g++ curl pkg-config libv4l-dev libjpeg-dev build-essential libssl-dev vim cmake git-core
+sudo apt-get install g++ curl pkg-config libv4l-dev libjpeg-dev build-essential libssl-dev cmake git-core
 curl https://raw.github.com/creationix/nvm/master/install.sh | sh
 source ~/.profile
 nvm install -s 0.10
