@@ -1,4 +1,4 @@
-# Ubuntu 13.10
+# Ubuntu 14.04
 
 # hostname
 HOSTNAME=hostname
@@ -34,6 +34,10 @@ sudo dpkg-reconfigure --frontend noninteractive tzdata
 
 # ntp
 sudo apt-get install ntp -y
+echo "NTPD_OPTS='-4 -g'" | sudo tee /etc/default/ntp
+sudo sed -ie 's/restrict -6/#restrict -6/gI' /etc/ntp.conf
+sudo sed -ie 's/restrict ::1/#restrict ::1/gI' /etc/ntp.conf
+sudo service ntp restart
 
 # swap
 sudo fallocate -l 4G /swapfile
@@ -60,7 +64,7 @@ sudo apt-get dist-upgrade -y
 sudo apt-get autoremove -y
 
 # misc utilities
-sudo apt-get install screen tmux htop unzip -y
+sudo apt-get install screen tmux htop unzip git -y
 
 # firewall
 sudo apt-get install iptables-persistent -y
@@ -73,8 +77,8 @@ sudo iptables -A INPUT -j REJECT
 sudo iptables-save > /etc/iptables/rules.v4
 
 # node.js source install
-sudo apt-get install g++ curl pkg-config libv4l-dev libjpeg-dev build-essential libssl-dev cmake git-core
-curl https://raw.github.com/creationix/nvm/master/install.sh | sh
+sudo apt-get -y install g++ curl pkg-config libv4l-dev libjpeg-dev build-essential libssl-dev cmake git-core
+curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
 source ~/.profile
 nvm install -s 0.10
 npm update npm -g
@@ -98,14 +102,12 @@ sudo apt-get update
 sudo apt-get install php5-fpm php5-cli php5-mysql php5-xcache -y
 
 # mono
-sudo apt-get install build-essential autoconf automake libtool zlib1g-dev pkg-config gettext -y
-wget http://download.mono-project.com/sources/mono/mono-3.2.8.tar.bz2
-tar xf  mono-3.2.8.tar.bz2
-cd mono-3.2.8
-./autogen.sh --prefix=/usr/local
-make -j4
-sudo make install
-rm -rf mono-3.2.8*
+curl -s http://download.mono-project.com/repo/xamarin.gpg | sudo apt-key add -
+echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/xamarin.list
+sudo apt-get update
+sudo apt-get -y install mono-complete
+sudo mozroots --import --sync --machine
+echo "y\n\y\n" | sudo certmgr -ssl -m https://nuget.org
 
 # pypy & python modules
 sudo apt-get install python-software-properties software-properties-common -y -f
@@ -116,3 +118,6 @@ sudo apt-get install python-pip python-dev build-essential -y
 sudo pip install boto configobj --upgrade 
 sudo apt-get install libmysqlclient-dev python-dev -y
 sudo pip install mysql-python --upgrade
+
+# docker
+curl -s https://get.docker.io/ubuntu/ | sudo sh
